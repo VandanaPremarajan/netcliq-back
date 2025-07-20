@@ -15,6 +15,10 @@
 .then(() => console.log('MongoDB Connected'))
 .catch(err => console.log(err));
 
+app.get("/", (req, res)=> {
+  res.send("Welcome To Node JS")
+});
+
 const usersRoutes = require('./routes/usersRoutes');
 app.use('/api/users', usersRoutes);
 
