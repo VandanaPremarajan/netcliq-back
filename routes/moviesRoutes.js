@@ -38,16 +38,48 @@ router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
 
 // Get all
 router.get('/', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+
+    const total = await Movies.countDocuments();
+
+    const movies = await Movies.find()
+      .populate('genre_ID')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.json({
+      data: movies,
+      total,
+      page,
+      limit,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// Always put fixed routes (/latest) before param routes (/:id)
+// get latest movies
+router.get('/latest', async (req, res) => {
     try {
-        const movies = await Movies.find().populate('genre_ID');
-        res.json(movies);
+        const latestMovies = await Movies.find()
+            .populate('genre_ID')
+            .sort({ release_date: -1 }) // or { createdAt: -1 }
+            .limit(10); // Adjust limit as needed
+
+        res.json(latestMovies);
     } catch (err) {
         res.status(500).json({ message: err.message });
     }
 });
 
 // Get by ID
-router.get('/:id', allowRoles(ROLES.ADMIN), async (req, res) => {
+router.get('/:id', async (req, res) => {
     try {
         const movie = await Movies.findById(req.params.id);
         if (!movie) return res.status(404).json({ message: 'Movie is not found' });
@@ -80,13 +112,12 @@ router.put('/:id', allowRoles(ROLES.ADMIN), upload.fields(
         movie.quality = quality;
         movie.language = language;
         movie.subtitles = subtitles;
-        movie.cast = cast;
+        movie.cast = cast;  
         movie.genre_ID = genre_ID;
-        movie.video_file = video_file;
-        movie.poster = poster;
-        movie.trailer_video = trailer_video;
+        if (poster) movie.poster = poster;
+        if (video_file) movie.video_file = video_file;
+        if (trailer_video) movie.trailer_video = trailer_video;
         movie.release_date = release_date;
-
         await movie.save();
         res.json(movie);
     } catch (err) {
@@ -106,5 +137,6 @@ router.delete('/:id', allowRoles(ROLES.ADMIN), async (req, res) => {
         res.status(500).json({ message: err.message });
     }
 });
+
 
 module.exports = router;

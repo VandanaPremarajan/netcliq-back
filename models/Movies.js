@@ -14,7 +14,7 @@ const MoviesSchema = new mongoose.Schema(
       required: true,
     },
     duration: {
-      type: String,
+      type: Number,
       required: true,
     },
     quality: {
@@ -53,7 +53,7 @@ const MoviesSchema = new mongoose.Schema(
       required: true,
     },
     release_date: {
-      type: String,
+      type: Date,
       required: true,
     },
   },
