@@ -36,7 +36,7 @@ router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
     }
 });
 
-// Get all
+// Get all with pagination
 router.get('/', async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
@@ -46,6 +46,37 @@ router.get('/', async (req, res) => {
     const total = await Movies.countDocuments();
 
     const movies = await Movies.find()
+      .populate('genre_ID')
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdAt: -1 });
+
+    res.json({
+      data: movies,
+      total,
+      page,
+      limit,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+
+// Get all with infinite scroll
+router.get('/search', async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const search = req.query.search || '';
+    const skip = (page - 1) * limit;
+
+    const query = {
+      title: { $regex: search, $options: 'i' }, // case-insensitive search
+    };
+
+    const total = await Movies.countDocuments(query);
+    const movies = await Movies.find(query)
       .populate('genre_ID')
       .skip(skip)
       .limit(limit)
