@@ -11,30 +11,64 @@ router.use(checkToken);
 
 
 // Add
-router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
-    [{name: 'poster', maxCount: 1}, 
-        {name: 'videoFile', maxCount:1}, 
-        {name: 'trailerVideo', maxCount:1}, 
-    ]) ,async (req, res) => {
-        
-    const { title, description, year, duration, quality, language, subtitles, cast, genre_ID, release_date } = req.body;
+const express = require('express');
+const { put } = require('@vercel/blob');
+const router = express.Router();
+const upload = require('../middleware/Multer');
+const { allowRoles, ROLES } = require('../middleware/auth');
+const Movies = require('../models/Movie');
 
-    if (!Array.isArray(genre_ID)) {
-        genre_ID = [genre_ID];
-    }
-
-    const poster = req.files.poster ? req.files.poster[0].path : null;
-    const video_file = req.files.videoFile ? req.files.videoFile[0].path : null; 
-    const trailer_video = req.files.trailerVideo ? req.files.trailerVideo[0].path : null;
-
+router.post(
+  '/',
+  allowRoles(ROLES.ADMIN),
+  upload.fields([
+    { name: 'poster', maxCount: 1 },
+    { name: 'videoFile', maxCount: 1 },
+    { name: 'trailerVideo', maxCount: 1 },
+  ]),
+  async (req, res) => {
     try {
-        const newMovie = new Movies({ title, description, year, duration, quality, language, subtitles, cast, genre_ID, video_file, poster, trailer_video, release_date });
-        await newMovie.save();
-        res.status(201).json(newMovie);
+      let { title, description, year, duration, quality, language, subtitles, cast, genre_ID, release_date } = req.body;
+
+      if (!Array.isArray(genre_ID)) genre_ID = [genre_ID];
+
+      // Upload each file (if provided) to Vercel Blob
+      const uploadToBlob = async (file) => {
+        if (!file) return null;
+        const blob = await put(file.originalname, file.buffer, { access: 'public' });
+        return blob.url; // URL to store in DB
+      };
+
+      const poster = req.files.poster ? await uploadToBlob(req.files.poster[0]) : null;
+      const video_file = req.files.videoFile ? await uploadToBlob(req.files.videoFile[0]) : null;
+      const trailer_video = req.files.trailerVideo ? await uploadToBlob(req.files.trailerVideo[0]) : null;
+
+      // Save movie to DB with blob URLs
+      const newMovie = new Movies({
+        title,
+        description,
+        year,
+        duration,
+        quality,
+        language,
+        subtitles,
+        cast,
+        genre_ID,
+        video_file,
+        poster,
+        trailer_video,
+        release_date,
+      });
+
+      await newMovie.save();
+
+      res.status(201).json(newMovie);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+      console.error(err);
+      res.status(400).json({ message: err.message });
     }
-});
+  }
+);
 
 // Get all with pagination
 router.get('/', async (req, res) => {
