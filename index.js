@@ -28,6 +28,9 @@ app.use('/api/genres', genresRoutes);
 const moviesRoutes = require('./routes/moviesRoutes');
 app.use('/api/movies', moviesRoutes);
 
+// const subscriptionRoutes = require('./routes/subscriptionRoutes');
+// app.use('/api/subscription', subscriptionRoutes);
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });

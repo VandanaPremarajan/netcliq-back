@@ -12,7 +12,7 @@ router.post('/register/subscriber', async (req, res) => {
 
     try {
         const existingUser = await Users.findOne({ email_address });
-        if (existingUser) return res.status(400).json({ message: 'User already exists' });
+        if (existingUser) return res.status(400).json({ message: 'User already exists', status: false });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new Users({
@@ -27,9 +27,9 @@ router.post('/register/subscriber', async (req, res) => {
         });
 
         await newUser.save();
-        res.status(201).json({ message: 'Subscriber registered', user: newUser });
+        res.status(201).json({ message: 'Subscriber registered', status: true });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: err.message, status: false });
     }
 });
 
@@ -39,7 +39,7 @@ router.post('/register/admin', async (req, res) => {
 
     try {
         const existingUser = await Users.findOne({ email_address });
-        if (existingUser) return res.status(400).json({ message: 'User already exists' });
+        if (existingUser) return res.status(400).json({ message: 'User already exists', status: false });
 
         const hashedPassword = await bcrypt.hash(password, 10);
         const newUser = new Users({
@@ -54,15 +54,14 @@ router.post('/register/admin', async (req, res) => {
         });
 
         await newUser.save();
-        res.status(201).json({ message: 'Admin registered', user: newUser });
+        res.status(201).json({ message: 'Admin registered', status: true });
     } catch (err) {
-        res.status(500).json({ message: err.message });
+        res.status(500).json({ message: err.message, status: false });
     }
 });
 
 // Subscriber Login
 router.post('/login/subscriber', async (req, res) => {
-    console.log(req);
     const { email_address, password } = req.body;
 
     try {
@@ -75,7 +74,17 @@ router.post('/login/subscriber', async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: 'Incorrect password', status: false });
 
         const token = getToken(user);
-        res.json({ message: 'Subscriber logged in', user, accessToken: token , status: true});
+        const userData = {
+            id: user._id,
+            firstName: user.first_name,
+            lastName: user.last_name,
+            email: user.email_address,
+            phone: user.phone_number,
+            profilePic: user.profile_pic,
+            role: user.role,
+            isActive: user.is_active
+        };
+        res.json({ message: 'Subscriber logged in', user: userData, accessToken: token , status: true});
     } catch (err) {
         res.status(500).json({ message: err.message, status: false });
     }
@@ -95,7 +104,8 @@ router.post('/login/admin', async (req, res) => {
         if (!isMatch) return res.status(401).json({ message: 'Incorrect password', status: false });
 
         const token = getToken(user);
-        res.json({ message: 'Admin logged in', user, accessToken: token, status: true });
+        const { password: _, ...userData } = user.toObject(); //remove paaword 
+        res.json({ message: 'Admin logged in', userData, accessToken: token, status: true });
     } catch (err) {
         res.status(500).json({ message: err.message, status: false });
     }
