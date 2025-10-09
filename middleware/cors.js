@@ -1,17 +1,16 @@
 const cors = require('cors');
 
-// Reusable CORS for serverless
 const corsMiddleware = cors({
-  origin: 'https://netcliq-front.vercel.app',
+  origin: 'https://netcliq-front.vercel.app', // your frontend
   credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
 
 module.exports = function runCors(req, res) {
   return new Promise((resolve, reject) => {
-    corsMiddleware(req, res, (result) => {
-      if (result instanceof Error) reject(result);
-      else resolve(result);
+    corsMiddleware(req, res, (err) => {
+      if (err) reject(err);
+      else resolve();
     });
   });
 };

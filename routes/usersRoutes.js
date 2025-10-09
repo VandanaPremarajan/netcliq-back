@@ -8,10 +8,14 @@ const ROLES = require('../constants/roles');
 
 const runCors = require('../middleware/cors');
 
+// Apply CORS to all routes in this router
+router.use(async (req, res, next) => {
+    await runCors(req, res);
+    next();
+});
+
 // Subscriber Registration
 router.post('/register/subscriber', async (req, res) => {
-    await runCors(req, res);
-
     const { first_name, last_name, phone_number, email_address, password, profile_pic } = req.body;
 
     try {
@@ -39,8 +43,6 @@ router.post('/register/subscriber', async (req, res) => {
 
 // Admin Registration
 router.post('/register/admin', async (req, res) => {
-    await runCors(req, res);
-
     const { first_name, last_name, phone_number, email_address, password, profile_pic } = req.body;
 
     try {
@@ -68,8 +70,6 @@ router.post('/register/admin', async (req, res) => {
 
 // Subscriber Login
 router.post('/login/subscriber', async (req, res) => {
-    await runCors(req, res);
-
     const { email_address, password } = req.body;
 
     try {
@@ -100,8 +100,6 @@ router.post('/login/subscriber', async (req, res) => {
 
 // Admin Login
 router.post('/login/admin', async (req, res) => {
-    await runCors(req, res);
-
     const { email_address, password } = req.body;
 
     try {
@@ -127,8 +125,6 @@ router.use(checkToken);
 
 // Get all
 router.get('/', async(req, res) => {
-    await runCors(req, res);
-
     try{
         const users = await Users.find();
         console.log(123)
@@ -141,8 +137,6 @@ router.get('/', async(req, res) => {
 
 // Get by id
 router.get('/:id', async(req, res) => {
-    await runCors(req, res);
-
     try{
         const user = await Users.findById(req.params.id);
         if (!user) return res.status(404).json({ message: 'User is not found' });
@@ -155,8 +149,6 @@ router.get('/:id', async(req, res) => {
 
 // Update
 router.put('/:id', async (req, res) => {
-    await runCors(req, res);
-
     const { first_name, last_name, phone_number, email_address, password, profile_pic, role, is_active } = req.body;
     try {
         const user = await Users.findById(req.params.id);
@@ -181,8 +173,6 @@ router.put('/:id', async (req, res) => {
 
 // Delete
 router.delete('/:id', allowRoles(ROLES.ADMIN, ROLES.SUPERADMIN), async (req, res) => {
-    await runCors(req, res);
-    
     try {
         const user = await Users.findById(req.params.id);
         if (!user) return res.status(404).json({ message: 'User is not found' });
