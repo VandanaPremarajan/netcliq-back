@@ -7,20 +7,6 @@
 
  const app = express();
 //  app.use(cors());
-
-// CORS middleware - apply globally
-app.use(cors({
-  origin: 'https://netcliq-front.vercel.app', 
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS']
-}));
-
-// Handle preflight requests globally
-app.options('*', cors({
-  origin: 'https://netcliq-front.vercel.app',
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS']
-}));
  
  app.use(bodyParser.json());
 
