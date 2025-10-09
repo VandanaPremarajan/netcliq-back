@@ -8,7 +8,7 @@
  const app = express();
 //  app.use(cors());
  app.use(cors({
-  origin: 'https://netcliq-back.vercel.app',
+  origin: 'https://netcliq-front.vercel.app',
   credentials: true
 }));
  app.use(bodyParser.json());
