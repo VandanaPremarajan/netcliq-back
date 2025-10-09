@@ -4,11 +4,19 @@ const Movies = require('../models/Movies');
 const upload = require('../middleware/Multer');
 const { checkToken, allowRoles } = require('../middleware/Authentication');
 const ROLES = require('../constants/roles');
+const { put } = require('@vercel/blob'); // Vercel Blob
 
 // -------Protected Routes--------- //
 
 router.use(checkToken);
 
+
+// Helper function to upload file to Vercel Blob
+const uploadToBlob = async (file) => {
+    if (!file) return null;
+    const blob = await put(file.originalname, file.buffer, { access: 'public' });
+    return blob.url; // return the URL
+};
 
 // Add
 router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
@@ -23,9 +31,9 @@ router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
         genre_ID = [genre_ID];
     }
 
-    const poster = req.files.poster ? req.files.poster[0].path : null;
-    const video_file = req.files.videoFile ? req.files.videoFile[0].path : null; 
-    const trailer_video = req.files.trailerVideo ? req.files.trailerVideo[0].path : null;
+    const poster = req.files.poster ? await uploadToBlob(req.files.poster[0]) : null;
+    const video_file = req.files.videoFile ? await uploadToBlob(req.files.videoFile[0]) : null;
+    const trailer_video = req.files.trailerVideo ? await uploadToBlob(req.files.trailerVideo[0]) : null;
 
     try {
         const newMovie = new Movies({ title, description, year, duration, quality, language, subtitles, cast, genre_ID, video_file, poster, trailer_video, release_date });
@@ -128,9 +136,10 @@ router.put('/:id', allowRoles(ROLES.ADMIN), upload.fields(
     ]), async (req, res) => {
     const { title, description, year, duration, quality, language, subtitles, cast, genre_ID, release_date } = req.body;
 
-    const poster = req.files.poster ? req.files.poster[0].path : null;
-    const video_file = req.files.videoFile ? req.files.videoFile[0].path : null; 
-    const trailer_video = req.files.trailerVideo ? req.files.trailerVideo[0].path : null;
+    // Upload new files to Vercel Blob if provided
+    const poster = req.files.poster ? await uploadToBlob(req.files.poster[0]) : null;
+    const video_file = req.files.videoFile ? await uploadToBlob(req.files.videoFile[0]) : null;
+    const trailer_video = req.files.trailerVideo ? await uploadToBlob(req.files.trailerVideo[0]) : null;
 
     try {
         const movie = await Movies.findById(req.params.id);
