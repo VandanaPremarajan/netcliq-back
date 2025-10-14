@@ -6,14 +6,6 @@ const { getToken, checkToken, allowRoles } = require('../middleware/Authenticati
 const Users = require('../models/Users');
 const ROLES = require('../constants/roles');
 
-const runCors = require('../middleware/cors');
-
-// Apply CORS to all routes in this router
-router.use(async (req, res, next) => {
-    await runCors(req, res);
-    next();
-});
-
 // Subscriber Registration
 router.post('/register/subscriber', async (req, res) => {
     const { first_name, last_name, phone_number, email_address, password, profile_pic } = req.body;

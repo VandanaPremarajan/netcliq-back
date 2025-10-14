@@ -6,14 +6,6 @@ const { checkToken, allowRoles } = require('../middleware/Authentication');
 const ROLES = require('../constants/roles');
 const { put } = require('@vercel/blob'); // Vercel Blob
 
-const runCors = require('../middleware/cors');
-
-// Apply CORS to all routes in this router
-router.use(async (req, res, next) => {
-    await runCors(req, res);
-    next();
-});
-
 // -------Protected Routes--------- //
 
 router.use(checkToken);

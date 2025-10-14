@@ -2,14 +2,6 @@ const express = require('express');
 const router = express.Router();
 const Genre = require('../models/Genre');
 
-const runCors = require('../middleware/cors');
-
-// Apply CORS to all routes in this router
-router.use(async (req, res, next) => {
-    await runCors(req, res);
-    next();
-});
-
 // Create a new genre
 router.post('/', async (req, res) => {
     const { name, description } = req.body;

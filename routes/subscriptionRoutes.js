@@ -6,14 +6,6 @@ const Payment = require('../models/Payment');
 const UserSubscription = require('../models/UserSubscription');
 const User = require('../models/Users'); 
 
-const runCors = require('../middleware/cors');
-
-// Apply CORS to all routes in this router
-router.use(async (req, res, next) => {
-    await runCors(req, res);
-    next();
-});
-
 // Register a new subscription for a user
 router.post('/subscribe', async (req, res) => {
   try {

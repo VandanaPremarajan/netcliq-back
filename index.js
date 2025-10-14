@@ -5,8 +5,32 @@
  const cors = require('cors');
  require('dotenv').config();
 
- const app = express();
-//  app.use(cors());
+ const cors = require('cors');
+const app = express();
+
+// ✅ Allow both localhost and production
+const allowedOrigins = [
+  'https://netcliq-front.vercel.app',
+  'http://localhost:3000'
+];
+
+// ✅ Global CORS middleware
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
+  })
+);
+
+// ✅ Handle preflight requests
+app.options('*', cors());
  
  app.use(bodyParser.json());
 
