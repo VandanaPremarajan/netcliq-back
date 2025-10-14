@@ -1,7 +1,7 @@
  const express = require('express');
  const PORT = 5050;
  const mongoose = require('mongoose');
-//  const bodyParser = require('body-parser');
+ const bodyParser = require('body-parser');
 
  require('dotenv').config();
 
@@ -11,14 +11,14 @@ const app = express();
 // Use the CORS middleware
 app.use(
   cors({
-    origin: 'https://your-frontend.vercel.app', // use exact frontend URL
+    origin: 'https://netcliq-front.vercel.app',  
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     credentials: true // if you need cookies/auth
   })
 );
 app.use(express.json());
  
-//  app.use(bodyParser.json());
+ app.use(bodyParser.json());
 
  app.use('/uploads', express.static('uploads'));
 
