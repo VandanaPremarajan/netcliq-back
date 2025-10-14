@@ -1,7 +1,7 @@
  const express = require('express');
  const PORT = 5050;
  const mongoose = require('mongoose');
- const bodyParser = require('body-parser');
+//  const bodyParser = require('body-parser');
 
  require('dotenv').config();
 
@@ -18,7 +18,7 @@ app.use(
 );
 app.use(express.json());
  
- app.use(bodyParser.json());
+//  app.use(bodyParser.json());
 
  app.use('/uploads', express.static('uploads'));
 
