@@ -1,7 +1,8 @@
 const cors = require('cors');
 
 const corsMiddleware = cors({
-  origin: 'https://netcliq-front.vercel.app', // your frontend
+  origin: 'https://netcliq-front.vercel.app', 
+  // origin: 'http://localhost:3000', 
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 });
