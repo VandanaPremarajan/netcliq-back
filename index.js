@@ -2,7 +2,7 @@
  const PORT = 5050;
  const mongoose = require('mongoose');
  const bodyParser = require('body-parser');
- const cors = require('cors');
+
  require('dotenv').config();
 
  const cors = require('cors');
