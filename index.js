@@ -8,28 +8,17 @@
  const cors = require('cors');
 const app = express();
 
-// ✅ Allow both localhost and production
-const allowedOrigins = [
-  'https://netcliq-front.vercel.app',
-  'http://localhost:3000'
-];
-
-// ✅ Global CORS middleware
+// Global CORS middleware
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
+    origin: 'https://netcliq-front.vercel.app', 
+  // origin: 'http://localhost:3000', 
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS']
   })
 );
 
-// ✅ Handle preflight requests
+// Handle preflight requests
 app.options('*', cors());
  
  app.use(bodyParser.json());
