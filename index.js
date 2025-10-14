@@ -1,28 +1,24 @@
  const express = require('express');
  const PORT = 5050;
  const mongoose = require('mongoose');
- const bodyParser = require('body-parser');
+//  const bodyParser = require('body-parser');
 
  require('dotenv').config();
 
  const cors = require('cors');
 const app = express();
 
-// Global CORS middleware
+// Use the CORS middleware
 app.use(
   cors({
-    origin: 'https://netcliq-front.vercel.app', 
-  // origin: 'http://localhost:3000', 
-    credentials: true,
+    origin: 'https://your-frontend.vercel.app', // use exact frontend URL
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization']
+    credentials: true // if you need cookies/auth
   })
 );
-
-// Handle preflight requests
-app.options('*', cors());
+app.use(express.json());
  
- app.use(bodyParser.json());
+//  app.use(bodyParser.json());
 
  app.use('/uploads', express.static('uploads'));
 
