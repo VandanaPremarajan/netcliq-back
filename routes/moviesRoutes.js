@@ -27,7 +27,7 @@ router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
         
     const { title, description, year, duration, quality, language, subtitles, cast, genre_ID, release_date } = req.body;
 
-    if (!Array.isArray(genre_ID)) {
+    if (genre_ID && !Array.isArray(genre_ID)) {
         genre_ID = [genre_ID];
     }
 
