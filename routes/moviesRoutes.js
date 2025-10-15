@@ -40,7 +40,7 @@ router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
         await newMovie.save();
         res.status(201).json(newMovie);
     } catch (err) {
-        res.status(400).json({ message: err.message });
+        res.status(400).json({ message: poster });
     }
 });
 
