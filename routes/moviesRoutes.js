@@ -14,7 +14,10 @@ router.use(checkToken);
 // Helper function to upload file to Vercel Blob
 const uploadToBlob = async (file) => {
     if (!file) return null;
-    const blob = await put(file.originalname, file.buffer, { access: 'public' });
+    const blob = await put(file.originalname, file.buffer, { 
+      access: 'public',
+      addRandomSuffix: true, 
+    });
     return blob.url; // return the URL
 };
 
