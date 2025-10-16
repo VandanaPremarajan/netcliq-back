@@ -50,11 +50,11 @@ const MoviesSchema = new mongoose.Schema(
     },
     trailer_video: {
       type: String,
-      // required: true,
+      required: true,
     },
     release_date: {
       type: Date,
-      // required: true,
+      required: true,
     },
   },
   { timestamps: true }
