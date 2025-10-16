@@ -46,15 +46,15 @@ const MoviesSchema = new mongoose.Schema(
     },
     poster: {
       type: String,
-      required: true,
+      // required: true,
     },
     trailer_video: {
       type: String,
-      required: true,
+      // required: true,
     },
     release_date: {
       type: Date,
-      required: true,
+      // required: true,
     },
   },
   { timestamps: true }

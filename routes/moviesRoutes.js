@@ -34,13 +34,16 @@ router.post('/', allowRoles(ROLES.ADMIN), upload.fields(
     const poster = req.files.poster ? await uploadToBlob(req.files.poster[0]) : null;
     const video_file = req.files.videoFile ? await uploadToBlob(req.files.videoFile[0]) : null;
     const trailer_video = req.files.trailerVideo ? await uploadToBlob(req.files.trailerVideo[0]) : null;
-
+console.log(req.body);
+console.log(poster);
+console.log(video_file);
+console.log(trailer_video);
     try {
         const newMovie = new Movies({ title, description, year, duration, quality, language, subtitles, cast, genre_ID, video_file, poster, trailer_video, release_date });
         await newMovie.save();
         res.status(201).json(newMovie);
     } catch (err) {
-        res.status(400).json({ message: poster });
+        res.status(400).json({ message: err.message });
     }
 });
 

@@ -13,6 +13,9 @@ const path = require('path');
 // Storing directly to vercel blob
 const storage = multer.memoryStorage(); 
 
-const upload = multer({storage});
+const upload = multer({
+  storage,
+  limits: { fileSize: 4 * 1024 * 1024 } // 4 MB max, because of vercel BLOB restriction
+});
 
 module.exports = upload;
